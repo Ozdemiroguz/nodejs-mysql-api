@@ -12,10 +12,4 @@
       "dest": "/"
     }
   ],
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node",
-      "maxDuration": 60
-    }
-  }
 }
