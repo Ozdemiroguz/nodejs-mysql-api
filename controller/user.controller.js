@@ -1,6 +1,6 @@
 const pool = require("../database/index");
 
-const smartHouseController = {
+const userController = {
     getAllUsers: async (req, res) => {
         try {
             const [rows, fields] = await pool.query("SELECT * FROM User");
