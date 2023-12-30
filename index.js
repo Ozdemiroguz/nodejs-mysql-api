@@ -6,7 +6,7 @@ require('dotenv').config()
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
-const postsRouter = require('./routes/posts.router')
+const userRouter = require('./routes/user.router')
 const authRouter = require('./routes/auth.router')
 
 app.use("/api/v1/user", userRouter)
