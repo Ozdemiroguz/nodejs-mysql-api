@@ -75,4 +75,4 @@ const userController = {
     },
 };
 
-module.exports = smartHouseController;
+module.exports = userController;
