@@ -5,21 +5,26 @@ const jwt = require('jsonwebtoken');
 const authController = {
     register: async (req, res) => {
         try {
-            const { email, password, name } = req.body;
+            const { email, password, name, surname, phone, numberOfRooms, active } = req.body;
+
+            // Email kontrolü
             const [user,] = await pool.query("SELECT * FROM User WHERE Mail = ?", [email]);
-            if (user[0]) return res.json({ error: "Email already exists!" });
-
-            const hash = await bcrypt.hash(password, 10);
-
-            const sql = "INSERT INTO User (Mail, Password, Name) VALUES (?, ?, ?)";
-            const [rows, fields] = await pool.query(sql, [email, hash, name]);
-
-            if (rows.affectedRows) {
-                return res.json({ message: "Ok" });
-            } else {
-                return res.json({ error: "Error" });
+            if (user[0]) {
+                return res.json({ error: "Email already exists!" });
             }
 
+            // Şifreyi hashle
+            const hash = await bcrypt.hash(password, 10);
+
+            // Kullanıcıyı veritabanına ekle
+            const userSql = "INSERT INTO User (Mail, Password, Name, Surname, Phone, NumberOfRooms, Active) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            const [userRows, userFields] = await pool.query(userSql, [email, hash, name, surname, phone, numberOfRooms, active]);
+
+            if (userRows.affectedRows) {
+                return res.json({ message: "Registration successful" });
+            } else {
+                return res.json({ error: "Registration failed" });
+            }
         } catch (error) {
             console.log(error);
             res.json({
