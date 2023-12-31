@@ -1,4 +1,6 @@
 const pool = require("../database/index");
+const bcrypt = require('bcrypt');
+
 
 const userController = {
     getAllUsers: async (req, res) => {
