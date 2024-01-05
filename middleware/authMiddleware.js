@@ -1,16 +1,29 @@
 const pool = require("../database/index");
 
 
-
 const authMiddleware = (req, res, next) => {
-    const apiKey = req.get('Authorization');
+    // API anahtarını kontrol et
+    const authHeader = req.headers.authorization;
 
-    if (!apiKey || apiKey !== 'YOUR_API_KEY') {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
+    const apiKey = authHeader.substring(7); // "Bearer " kısmını atla
 
-    // API anahtarı doğrulandı, isteği devam ettir
+    if (apiKey !== 'YOUR_API_KEY') {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // API anahtarı doğrulandı, işlemi devam ettir
+
+    // Özel bir değeri al, örneğin roomID
+    const roomID = req.query.roomID || req.body.roomID;
+
+    // Şimdi roomID'yi istediğiniz şekilde kullanabilirsiniz
+    req.roomID = roomID;
+
+    // Bir sonraki middleware veya route'a devam et
     next();
 };
 
