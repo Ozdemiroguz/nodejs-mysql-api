@@ -90,30 +90,27 @@ const getSensorController = {
         try {
             // Query to get the latest sensor readings for each room
             const query = `
-              SELECT
-                r.RoomID,
-                r.RoomName,
-                s.Temperature,
-                s.Humidity,
-                g.Gas,
-                f.Fire,
-                m.Move,
-                p.PotID,
-                ph.Humidity as PotHumidity
-              FROM
-                Room r
-              LEFT JOIN Temp_Hum s ON r.RoomID = s.RoomID
-              LEFT JOIN Gas g ON r.RoomID = g.RoomID
-              LEFT JOIN Fire f ON r.RoomID = f.RoomID
-              LEFT JOIN Move m ON r.RoomID = m.RoomID
-              LEFT JOIN Pot p ON r.RoomID = p.RoomID
-              LEFT JOIN Pot_Humidity ph ON p.PotID = ph.PotID
-              WHERE
-                s.Time = (
-                  SELECT MAX(Time) FROM Temp_Hum WHERE RoomID = r.RoomID
-                )
-              ORDER BY
-                r.RoomID;
+            SELECT
+            sensor_type,
+            MAX(Time) as last_reading,
+            value
+        FROM (
+            SELECT 'Temperature' as sensor_type, RoomID, Time, Temperature as value FROM Temp_Hum
+            UNION ALL
+            SELECT 'Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Temp_Hum
+            UNION ALL
+            SELECT 'Gas' as sensor_type, RoomID, Time, Gas as value FROM Gas
+            UNION ALL
+            SELECT 'Fire' as sensor_type, RoomID, Time, Fire as value FROM Fire
+            UNION ALL
+            SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move
+            UNION ALL
+            SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Pot_Humidity as value FROM Pot_Humidity
+        ) as all_sensors
+        WHERE RoomID = '7'
+        GROUP BY sensor_type;
+        
+        
             `;
 
             const { rows } = await pool.query(query);
