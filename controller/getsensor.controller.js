@@ -63,22 +63,23 @@ const getSensorController = {
             const { roomID } = req.query;
 
             const sql = `
-                SELECT sensor_type, MAX(Time) as last_reading
-                FROM (
-                    SELECT 'Temperature' as sensor_type, RoomID, Time FROM Temp_Hum WHERE RoomID = ?
-                    UNION ALL
-                    SELECT 'Humidity' as sensor_type, RoomID, Time FROM Temp_Hum WHERE RoomID = ?
-                    UNION ALL
-                    SELECT 'Gas' as sensor_type, RoomID, Time FROM Gas WHERE RoomID = ?
-                    UNION ALL
-                    SELECT 'Fire' as sensor_type, RoomID, Time FROM Fire WHERE RoomID = ?
-                    UNION ALL
-                    SELECT 'Move' as sensor_type, RoomID, Time FROM Move WHERE RoomID = ?
-                    UNION ALL
-                    SELECT 'Pot_Humidity' as sensor_type, RoomID, Time FROM Pot_Humidity WHERE RoomID = ?
-                ) as all_sensors
-                GROUP BY sensor_type;
-            `;
+            
+            SELECT sensor_type, MAX(Time) as last_reading, value
+            FROM (
+                SELECT 'Temperature' as sensor_type, RoomID, Time, Temperature as value FROM Temp_Hum WHERE RoomID = ?
+                UNION ALL
+                SELECT 'Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Temp_Hum WHERE RoomID = ?
+                UNION ALL
+                SELECT 'Gas' as sensor_type, RoomID, Time, Gas as value FROM Gas WHERE RoomID = ?
+                UNION ALL
+                SELECT 'Fire' as sensor_type, RoomID, Time, Fire as value FROM Fire WHERE RoomID = ?
+                UNION ALL
+                SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move WHERE RoomID = ?
+                UNION ALL
+                SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Pot_Humidity as value FROM Pot_Humidity WHERE RoomID = ?
+            ) as all_sensors
+            GROUP BY sensor_type;
+        `;
 
             const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
 
