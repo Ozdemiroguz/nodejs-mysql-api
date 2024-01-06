@@ -13,7 +13,7 @@ const getSensorController = {
             const apiKey = req.headers.authorization;
 
             if (!apiKey || apiKey !== 'YOUR_API_KEY') {
-                return res.status(401).json({ message: 'Unauthorized' });
+                return res.status(403).json({ message: 'Unauthorized' });
             }
 
             // API anahtarı doğrulandı, işlemi devam ettir
