@@ -72,8 +72,9 @@ const getSensorController = {
             const sql = `
                 SELECT sensor_type, MAX(Time) as last_reading
                 FROM (
-                   
-                    SELECT 'Temp_Hum' as sensor_type, RoomID, Time FROM Temp_Hum WHERE RoomID = ?
+                    SELECT 'Temperature' as sensor_type, RoomID, Time FROM Temp_Hum WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Humidity' as sensor_type, RoomID, Time FROM Temp_Hum WHERE RoomID = ?
                     UNION ALL
                     SELECT 'Gas' as sensor_type, RoomID, Time FROM Gas WHERE RoomID = ?
                     UNION ALL
@@ -86,7 +87,7 @@ const getSensorController = {
                 GROUP BY sensor_type;
             `;
 
-            const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID]);
+            const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
 
             res.json({ data: rows });
         } catch (error) {
