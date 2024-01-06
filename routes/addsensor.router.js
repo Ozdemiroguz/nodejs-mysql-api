@@ -4,10 +4,10 @@ const router = express.Router()
 const addSensorController = require("../controller/addsensor.controller")
 const authMiddleware = require("../middleware/authMiddleware")
 
-router.post("/addTemperatureHumidity", addSensorController.addTemperatureHumidity)
+router.post("/addTemperatureHumidity", authMiddleware, addSensorController.addTemperatureHumidity)
 router.post("/addGas", authMiddleware, addSensorController.addGas)
-router.post("/addFire", addSensorController.addFire)
-router.post("/addMovement", addSensorController.addMovement)
-router.post("/addPotHumidity", addSensorController.addPotHumidity)
+router.post("/addFire", authMiddleware, addSensorController.addFire)
+router.post("/addMovement", authMiddleware, addSensorController.addMovement)
+router.post("/addPotHumidity", authMiddleware, addSensorController.addPotHumidity)
 
 module.exports = router
