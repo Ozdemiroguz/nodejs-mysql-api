@@ -113,9 +113,10 @@ const getSensorController = {
                 UNION ALL
                 SELECT 'Move' as sensor_type, Time, Move as value FROM Move WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
                 UNION ALL
-                SELECT 'Pot_Humidity' as sensor_type, Time, Humidity as value FROM Pot_Humidity WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Pot_Humidity' as sensor_type, Time, Pot_Humidity as value FROM Pot_Humidity WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
             ) as all_sensors
             GROUP BY sensor_type;
+            
             `;
 
             const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
