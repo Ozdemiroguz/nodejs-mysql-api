@@ -57,14 +57,7 @@ const getSensorController = {
 
     getAllLatestSensorReadings: async (req, res) => {
         try {
-            // API anahtarını kontrol et
-            const apiKey = req.headers.authorization;
 
-            if (!apiKey || apiKey !== 'YOUR_API_KEY') {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
-
-            // API anahtarı doğrulandı, işlemi devam ettir
 
             // Burada roomID'yi doğrudan req.query üzerinden alabilirsiniz
             const { roomID } = req.query;
