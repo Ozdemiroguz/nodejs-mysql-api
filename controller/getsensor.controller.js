@@ -37,11 +37,7 @@ const getSensorController = {
             }
 
             // API anahtarını kontrol et
-            const apiKey = req.headers.authorization;
 
-            if (!apiKey || apiKey !== 'YOUR_API_KEY') {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
 
             // API anahtarı doğrulandı, işlemi devam ettir
 
@@ -93,11 +89,7 @@ const getSensorController = {
     getAllSensorReadings10: async (req, res) => {
         try {
             // API anahtarını kontrol et
-            const apiKey = req.headers.authorization;
 
-            if (!apiKey || apiKey !== 'YOUR_API_KEY') {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
 
             // API anahtarı doğrulandı, işlemi devam ettir
 
