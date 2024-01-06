@@ -5,6 +5,7 @@ const authMiddleware = require("../middleware/authMiddleware"); // API anahtarı
 
 router.get("/getLatestSensorReading", authMiddleware, getSensorController.getLatestSensorReading);
 router.get("/getSensorReadings10", authMiddleware, getSensorController.getSensorReadings10);
-router.gr
+router.get("/getAllLatestSensorReadings", authMiddleware, getSensorController.getAllLatestSensorReadings);
+router.get("/getAllSensorReadings10", authMiddleware, getSensorController.getAllSensorReadings10);
 
 module.exports = router; 
