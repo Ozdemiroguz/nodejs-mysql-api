@@ -76,7 +76,7 @@ const getSensorController = {
                 UNION ALL
                 SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Pot_Humidity as value FROM Pot_Humidity WHERE RoomID = ?
+                SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Pot_Humidity WHERE RoomID = ?
             ) as all_sensors
             GROUP BY sensor_type;
         `;
