@@ -57,25 +57,29 @@ const getSensorController = {
 
     getAllLatestSensorReadings: async (req, res) => {
         try {
+
+
+            // Burada roomID'yi doğrudan req.query üzerinden alabilirsiniz
             const { roomID } = req.query;
 
             const sql = `
+            
             SELECT sensor_type, MAX(Time) as last_reading, value
             FROM (
-                SELECT 'Temperature' as sensor_type, Time, Temperature as value FROM Temp_Hum WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Temperature' as sensor_type, RoomID, Time, Temperature as value FROM Temp_Hum WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Humidity' as sensor_type, Time, Humidity as value FROM Temp_Hum WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Temp_Hum WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Gas' as sensor_type, Time, Gas as value FROM Gas WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Gas' as sensor_type, RoomID, Time, Gas as value FROM Gas WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Fire' as sensor_type, Time, Fire as value FROM Fire WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Fire' as sensor_type, RoomID, Time, Fire as value FROM Fire WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Move' as sensor_type, Time, Move as value FROM Move WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move WHERE RoomID = ?
                 UNION ALL
-                SELECT 'Pot_Humidity' as sensor_type, Time, Pot_Humidity as value FROM Pot_Humidity WHERE RoomID = ? ORDER BY Time DESC LIMIT 1
+                SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Pot_Humidity WHERE RoomID = ?
             ) as all_sensors
-            GROUP BY sensor_type
-            `;
+            GROUP BY sensor_type;
+        `;
 
             const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
 
@@ -88,37 +92,43 @@ const getSensorController = {
 
     getAllSensorReadings10: async (req, res) => {
         try {
-            // Query to get the latest sensor readings for each room
-            const query = `
-            SELECT
-            sensor_type,
-            MAX(Time) as last_reading,
-            value
-        FROM (
-            SELECT 'Temperature' as sensor_type, RoomID, Time, Temperature as value FROM Temp_Hum
-            UNION ALL
-            SELECT 'Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Temp_Hum
-            UNION ALL
-            SELECT 'Gas' as sensor_type, RoomID, Time, Gas as value FROM Gas
-            UNION ALL
-            SELECT 'Fire' as sensor_type, RoomID, Time, Fire as value FROM Fire
-            UNION ALL
-            SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move
-            UNION ALL
-            SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Pot_Humidity as value FROM Pot_Humidity
-        ) as all_sensors
-        WHERE RoomID = '7'
-        GROUP BY sensor_type;
-        
-        
+            // API anahtarını kontrol et
+            const apiKey = req.headers.authorization;
+
+            if (!apiKey || apiKey !== 'YOUR_API_KEY') {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            // API anahtarı doğrulandı, işlemi devam ettir
+
+            // Burada roomID'yi doğrudan req.query üzerinden alabilirsiniz
+            const { roomID } = req.query;
+
+            const sql = `
+                SELECT *
+                FROM (
+                    SELECT 'Temperature' as sensor_type, * FROM Temp_Hum WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Humidity' as sensor_type, * FROM Temp_Hum WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Gas' as sensor_type, * FROM Gas WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Fire' as sensor_type, * FROM Fire WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Move' as sensor_type, * FROM Move WHERE RoomID = ?
+                    UNION ALL
+                    SELECT 'Pot_Humidity' as sensor_type, * FROM Pot_Humidity WHERE RoomID = ?
+                ) as all_sensors
+                ORDER BY Time DESC
+                LIMIT 10;
             `;
 
-            const { rows } = await pool.query(query);
+            const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
 
-            res.status(200).json(rows);
+            res.json({ data: rows });
         } catch (error) {
-            console.error("Error retrieving latest sensor readings:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+            console.error(error);
+            res.status(500).json({ status: "error" });
         }
     },
 };
