@@ -63,10 +63,9 @@ const addSensorController = {
     deleteSensorTable: async (req, res) => {
         try {
             const { sensorType } = req.params;
-
             // Önce tabloyu varsa sil
-            const dropTableSQL = `DROP TABLE IF EXISTS ${sensorType};`;
-            await pool.query(dropTableSQL);
+            const deleteDataSQL = `DELETE FROM ${sensorType};`;
+            await pool.query(deleteDataSQL);
 
             res.json({ message: `Sensor table ${sensorType} has been deleted successfully.` });
         } catch (error) {
