@@ -9,5 +9,7 @@ router.post("/addGas", authMiddleware, addSensorController.addGas)
 router.post("/addFire", authMiddleware, addSensorController.addFire)
 router.post("/addMovement", authMiddleware, addSensorController.addMovement)
 router.post("/addPotHumidity", authMiddleware, addSensorController.addPotHumidity)
+router.post("/deleteSensorTable/:sensorType", authMiddleware, addSensorController.deleteSensorTable)
+
 
 module.exports = router
