@@ -60,21 +60,51 @@ const getSensorController = {
 
             const sql = `
             
-            SELECT sensor_type, MAX(Time) as last_reading, value
-            FROM (
-                SELECT 'Temperature' as sensor_type, RoomID, Time, Temperature as value FROM Temp_Hum WHERE RoomID = ?
-                UNION ALL
-                SELECT 'Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Temp_Hum WHERE RoomID = ?
-                UNION ALL
-                SELECT 'Gas' as sensor_type, RoomID, Time, Gas as value FROM Gas WHERE RoomID = ?
-                UNION ALL
-                SELECT 'Fire' as sensor_type, RoomID, Time, Fire as value FROM Fire WHERE RoomID = ?
-                UNION ALL
-                SELECT 'Move' as sensor_type, RoomID, Time, Move as value FROM Move WHERE RoomID = ?
-                UNION ALL
-                SELECT 'Pot_Humidity' as sensor_type, RoomID, Time, Humidity as value FROM Pot_Humidity WHERE RoomID = ?
-            ) as all_sensors
-            GROUP BY sensor_type;
+            SELECT
+                R.RoomID,
+                TH.Temperature AS LastTemperature,
+                TH.Humidity AS LastHumidity,
+                G.Gas AS LastGas,
+                F.Fire AS LastFire,
+                M.Move AS LastMove
+            FROM Room AS R
+            LEFT JOIN (
+                SELECT RoomID, Temperature, Humidity
+                FROM Temp_Hum
+                WHERE (RoomID, Time) IN (
+                    SELECT RoomID, MAX(Time) AS MaxTime
+                    FROM Temp_Hum
+                    GROUP BY RoomID
+                )
+            ) AS TH ON R.RoomID = TH.RoomID
+            LEFT JOIN (
+                SELECT RoomID, Gas
+                FROM Gas
+                WHERE (RoomID, Time) IN (
+                    SELECT RoomID, MAX(Time) AS MaxTime
+                    FROM Gas
+                    GROUP BY RoomID
+                )
+            ) AS G ON R.RoomID = G.RoomID
+            LEFT JOIN (
+                SELECT RoomID, Fire
+                FROM Fire
+                WHERE (RoomID, Time) IN (
+                    SELECT RoomID, MAX(Time) AS MaxTime
+                    FROM Fire
+                    GROUP BY RoomID
+                )
+            ) AS F ON R.RoomID = F.RoomID
+            LEFT JOIN (
+                SELECT RoomID, Move
+                FROM Move
+                WHERE (RoomID, Time) IN (
+                    SELECT RoomID, MAX(Time) AS MaxTime
+                    FROM Move
+                    GROUP BY RoomID
+                )
+            ) AS M ON R.RoomID = M.RoomID
+            WHERE R.RoomID = ?;
         `;
 
             const [rows, fields] = await pool.query(sql, [roomID, roomID, roomID, roomID, roomID, roomID]);
