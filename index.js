@@ -22,7 +22,7 @@ app.use("/api/v1/addSensor", addSensorRouter);// Use the addSensor router
 app.use("/api/v1/getSensor", getSensorRouter);// Use the getSensor router
 app.use(authMiddleware);// Use the authMiddleware
 
-const PORT = process.env.PORT || 5000
+const PORT = 21716
 
 app.listen(PORT, () => {
     console.log("Server is running....")
